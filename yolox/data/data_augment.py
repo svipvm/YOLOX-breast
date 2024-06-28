@@ -139,11 +139,16 @@ def _mirror(image, boxes, prob=0.5):
     return image, boxes
 
 
-def preproc(img, input_size, swap=(2, 0, 1)):
-    if len(img.shape) == 3:
-        padded_img = np.ones((input_size[0], input_size[1], 3), dtype=np.uint8) * 114
+def preproc(img, input_size, swap=(2, 0, 1), pad_mode='const'):
+    if pad_mode == 'min':
+        pad_value = np.min(img)
     else:
-        padded_img = np.ones(input_size, dtype=np.uint8) * 114
+        pad_value = 114
+
+    if len(img.shape) == 3:
+        padded_img = np.ones((input_size[0], input_size[1], 3), dtype=np.uint8) * pad_value
+    else:
+        padded_img = np.ones(input_size, dtype=np.uint8) * pad_value
 
     r = min(input_size[0] / img.shape[0], input_size[1] / img.shape[1])
     resized_img = cv2.resize(
